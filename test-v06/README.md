@@ -22,3 +22,14 @@ Préparer une synchronisation automatique sécurisée entre PC et téléphone.
 - Aucune synchronisation Supabase activée
 - Site principal V0.5.2 conservé sur main
 - Progression principale : 160 points et 18 mots
+
+## Test 3 — Détection des conflits
+
+- Deux journaux de 4 actions utilisés.
+- Même identifiant pour une action différente.
+- Valeur pointsDelta modifiée de 10 à 0.
+- Conflit détecté : validé.
+- Fusion refusée en présence du conflit : validé.
+- Aucune donnée Supabase modifiée.
+
+Résultat : le programme de test bloque la fusion lorsqu'un même identifiant correspond à des contenus différents.
