@@ -33,3 +33,21 @@ Préparer une synchronisation automatique sécurisée entre PC et téléphone.
 - Aucune donnée Supabase modifiée.
 
 Résultat : le programme de test bloque la fusion lorsqu'un même identifiant correspond à des contenus différents.
+
+## Test 4 — Fusion simulée entre deux appareils
+
+- Journal appareil 1 : 4 actions.
+- Journal appareil 2 : 5 actions, dont 4 communes.
+- Actions reçues : 9.
+- Actions uniques conservées : 5.
+- Doublons écartés : 4.
+- Points conservés : 40.
+- Inversion de l'ordre des journaux : validée.
+- Résultat identique dans les deux sens : validé.
+- Aucune donnée Supabase modifiée.
+
+Résultat : la fusion simulée conserve les actions distinctes
+et évite le double comptage des actions communes.
+
+Limite : la synchronisation automatique réelle et la
+résolution des révisions concurrentes restent à développer.
