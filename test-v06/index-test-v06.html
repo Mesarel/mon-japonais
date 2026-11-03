@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#5d4ed8"><title>Mon Japonais V0.5.2 — entraînement personnel</title><style>
+<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#5d4ed8"><title>Mon Japonais V0.6 — développement de la synchronisation</title><style>
 :root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#22223e;background:#f6f6fc}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #e9e8f6;padding:15px max(18px,calc((100vw - 980px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font-weight:800;color:#5e4fd6;font-size:1.35rem}.muted{color:#76758a;font-size:.88rem}main{max-width:980px;margin:auto;padding:28px 16px 90px}.hero{border-radius:24px;background:linear-gradient(125deg,#6250d9,#9685f5);color:white;padding:26px}.hero h1{margin:0 0 7px;font-size:clamp(1.5rem,4vw,2.3rem)}.hero p{margin:0;opacity:.95}.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.stat{background:#ffffff25;border:1px solid #ffffff45;border-radius:14px;padding:10px 16px}.stat strong{display:block;font-size:1.25rem}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}.tabs button{background:white;color:#514c81;border:1px solid #e4e2f1}.tabs button.active{background:#5d4ed8;color:white}.panel{background:white;border:1px solid #e9e8f5;border-radius:22px;padding:24px;margin:16px 0;box-shadow:0 5px 20px #29264a07}h2{margin-top:0;font-size:1.3rem}h3{margin:0 0 8px}button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:1rem;cursor:pointer;background:#5d4ed8;color:white}button:disabled{opacity:.5;cursor:not-allowed}button.secondary{background:#eeeafb;color:#5144ad}button.option{width:100%;display:block;text-align:left;margin:9px 0;background:#f5f4fd;color:#2c2b45;border:2px solid transparent}button.option:hover{border-color:#a99df9}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.tile{border:1px solid #e6e5f2;border-radius:16px;padding:18px}.tile p{color:#6b6882}.progress{height:12px;background:#eae8f5;border-radius:20px;overflow:hidden}.fill{height:100%;background:#5c50d7;width:0}.bigjp{font-size:clamp(2rem,8vw,3rem);font-weight:800;text-align:center;margin:20px 0 5px}.center{text-align:center}.reading{color:#756ca7;text-align:center;font-size:1.15rem}.option-rom{display:block;font-size:.88rem;font-weight:500;color:#716c91;margin-top:5px}.option-jp{display:block;font-size:1.3rem;font-weight:700}.reading-helper{font-size:.85rem;color:#716c91;text-align:center}.result{padding:13px;border-radius:12px;margin:15px 0;background:#f4f2ff}.good{background:#e8f8ef;color:#176b3b}.bad{background:#fff1ec;color:#984b33}.answer{width:100%;font-size:1rem;border-radius:12px;padding:14px;border:2px solid #d8d5ed}.controls{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}.hide{display:none!important}footer{text-align:center;color:#78758b;font-size:.83rem;padding:10px 20px 35px}.small{font-size:.84rem}.lesson{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.badge{background:#edeafb;border-radius:100px;padding:7px 11px;font-size:.78rem;font-weight:700;color:#5c4fbd}.flash{border:2px dashed #c2bdf0;border-radius:18px;padding:25px;min-height:170px}.status{font-size:.88rem;color:#696782}.warning{background:#fff5dd;color:#785519;padding:12px;border-radius:12px}select{padding:12px;border:1px solid #dcd8f1;border-radius:12px;background:white;max-width:100%}@media(max-width:540px){.panel{padding:17px}.hero{padding:20px}}
 
 /* Aide à la lecture adaptée au niveau */
@@ -18,14 +18,168 @@ body[data-reading="beginner"] #readinghelp{display:none}
 .account-status.success{background:#e8f8ef;color:#176b3b}
 .cloud-details{padding:13px;border:1px solid #e5e2f5;border-radius:12px;margin-top:12px}
 .cloud-details summary{cursor:pointer;font-weight:700}
-</style></head><body><header><div class="logo">🌸 Mon Japonais</div><div class="muted">Mon espace personnel · gratuit</div></header><main><section class="hero"><h1>Un peu de japonais, chaque jour 🇯🇵</h1><p>Apprendre doucement, répéter souvent et progresser sans pression.</p><div class="stats"><div class="stat"><strong id="points">0</strong>points gagnés</div><div class="stat"><strong id="learned">0</strong>mots pratiqués</div><div class="stat"><strong id="due">0</strong>à revoir</div></div></section><div class="reading-controls"><label for="readingmode">📖 Aide à la lecture</label><select id="readingmode" aria-label="Niveau de lecture"><option value="beginner">Débutant · rōmaji visibles</option><option value="intermediate">Intermédiaire · sur demande</option><option value="advanced">Avancé · japonais seul</option></select><button class="secondary" id="readinghelp" type="button" aria-pressed="false">Afficher les rōmaji</button></div><nav class="tabs" aria-label="Rubriques"><button data-tab="home" class="active">🏠 Accueil</button><button data-tab="quiz">🧩 Exercices</button><button data-tab="flash">🧠 Révisions</button><button data-tab="speak">🎤 Oral</button><button data-tab="account">☁️ Mon compte</button></nav><section id="home" class="view"><div class="panel"><h2>Ton parcours de voyage</h2><p>Commence par les mots essentiels que tu as déjà rencontrés. Les autres leçons sont proposées dans la même bibliothèque.</p><div id="lessonlist" class="cards"></div></div><div class="panel"><h2>Une routine facile à retenir</h2><p>5 min de révision, 10 min d'exercices, 5 min d'écoute et 5 min de prononciation. Termine par 5 min sur tes mots difficiles.</p><p class="small muted">Tes résultats sont sauvegardés dans ce navigateur. Ils ne se synchronisent pas encore avec les autres appareils.</p></div></section><section id="quiz" class="view hide"><div class="panel"><div class="lesson"><h2>Exercices variés</h2><select id="quizlesson" aria-label="Choisir une leçon"></select></div><p id="quiztype" class="badge" style="display:inline-block"></p><div class="progress"><div class="fill" id="quizbar"></div></div><p class="status" id="qcount"></p><div id="question"></div><div id="feedback" aria-live="polite"></div><div class="controls"><button id="next" class="hide">Question suivante →</button><button id="restart" class="secondary">Recommencer</button></div></div></section><section id="flash" class="view hide"><div class="panel"><h2>Réviser pour mieux mémoriser</h2><p><strong>1.</strong> Essaie de retrouver le sens. <strong>2.</strong> Clique sur « Voir la réponse ». <strong>3.</strong> Choisis « J’ai oublié » ou « Je connais ». Les mots oubliés reviendront plus souvent.</p><div id="flashcard" class="flash center"></div><div class="controls"><button id="reveal" class="secondary">👀 Voir la réponse</button><button id="again" class="hide">↻ J’ai oublié</button><button id="known" class="hide">✓ Je connais</button><button id="nextflash" class="secondary">Autre carte ↻</button></div><p id="flashstatus" class="status" aria-live="polite"></p><p class="small muted">Tes choix sont mémorisés sur cet appareil. Aucun compte n’est nécessaire pour réviser.</p></div></section><section id="speak" class="view hide"><div class="panel"><h2>Écoute et prononciation</h2><p>Écoute la phrase japonaise, puis essaie de la répéter. Autorise le microphone quand ton navigateur le demande.</p><select id="speaklesson" aria-label="Choisir une leçon orale"></select><div id="speechprompt"></div><div class="controls"><button id="listen">🔊 Écouter</button><button id="slow" class="secondary">🐢 Plus lentement</button><button id="record">🎤 Parler</button><button id="nextspeak" class="secondary">Autre phrase ↻</button></div><div id="speechresult" aria-live="polite"></div><p class="warning small">La reconnaissance peut être indisponible sur certains navigateurs et utilise parfois un service en ligne. Elle vérifie surtout les mots reconnus, pas la qualité phonétique exacte de ton accent.</p></div></section><section id="account" class="view hide"><div class="panel"><h2>☁️ Mon compte et mes sauvegardes</h2><p>La connexion est facultative : tu peux toujours apprendre sans compte. Tes données actuelles restent dans ce navigateur tant que tu ne décides pas de les transférer.</p><div class="controls"><button id="backupdownload" class="secondary">⬇️ Sauvegarder mes progrès (JSON)</button><button id="backupimport" class="secondary" type="button">⬆️ Importer une sauvegarde (JSON)</button><input id="backupfile" type="file" accept=".json,application/json" class="hide" aria-label="Choisir une sauvegarde JSON"></div><p id="importstatus" class="status" aria-live="polite"></p><details class="cloud-details" id="cloudsettings"><summary>1. Configurer la connexion Supabase</summary><p class="small">L'adresse du projet est déjà indiquée. Colle uniquement ta <strong>Publishable key</strong> (clé commençant par <code>sb_publishable_</code>). Ne mets jamais de clé secrète ou de mot de passe de base de données.</p><div class="account-grid"><div><label for="cloudurl">Adresse du projet</label><input id="cloudurl" type="url" value="https://udvnvvlnjhdtphtgkmis.supabase.co" autocomplete="off"></div><div><label for="cloudkey">Publishable key</label><input id="cloudkey" type="text" placeholder="sb_publishable_..." autocomplete="off" spellcheck="false"></div></div><div class="account-actions"><button id="cloudconfigure">Enregistrer sur cet appareil</button></div></details><div id="cloudauth" class="hide"><h3 style="margin-top:22px">2. Connexion personnelle</h3><div class="account-grid"><div><label for="accountemail">Adresse e-mail</label><input id="accountemail" type="email" autocomplete="username" placeholder="ton e-mail"></div><div><label for="accountpassword">Mot de passe</label><input id="accountpassword" type="password" autocomplete="current-password" minlength="12" placeholder="12 caractères minimum"></div></div><div class="account-actions"><button id="accountlogin">Me connecter</button><button id="accountsignup" class="secondary">Créer mon compte</button><button id="accountlogout" class="secondary hide">Me déconnecter</button></div></div><p id="accountstatus" class="account-status" aria-live="polite">Aucune connexion configurée sur cet appareil.</p><div id="syncoptions" class="hide"><h3>3. Synchroniser mes progrès</h3><p class="warning small">La synchronisation est <strong>manuelle</strong>. Avant un transfert, télécharge une sauvegarde JSON. Ne transfère pas les données du téléphone après celles du PC sans avoir contrôlé les différences : un transfert remplacerait la sauvegarde cloud existante.</p><div class="account-actions"><button id="cloudinspect" class="secondary">Consulter la sauvegarde cloud</button><button id="cloudupload">Envoyer les progrès de cet appareil</button><button id="clouddownload" class="secondary">Remplacer les progrès locaux par le cloud</button></div><p id="cloudreport" class="status" aria-live="polite"></p></div></div></section></main><footer>Mon Japonais · prototype personnel · pas de publicité · aucun abonnement nécessaire</footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script>
+
+/* V0.6 : état de la synchronisation automatique */
+.v06-box{border:2px solid #b9b1ec;border-radius:16px;padding:18px;margin:18px 0;background:#f8f7ff}
+.v06-box p{line-height:1.5}.v06-state{padding:10px;border-radius:10px;background:#eae6ff;overflow-wrap:anywhere}
+.v06-state.error{background:#fff1ec;color:#843e2b}.v06-state.ok{background:#e8f8ef;color:#176b3b}
+</style></head><body><header><div class="logo">🌸 Mon Japonais</div><div class="muted">Mon espace personnel · gratuit</div></header><main><section class="hero"><h1>Un peu de japonais, chaque jour 🇯🇵</h1><p>Apprendre doucement, répéter souvent et progresser sans pression.</p><div class="stats"><div class="stat"><strong id="points">0</strong>points gagnés</div><div class="stat"><strong id="learned">0</strong>mots pratiqués</div><div class="stat"><strong id="due">0</strong>à revoir</div></div></section><div class="reading-controls"><label for="readingmode">📖 Aide à la lecture</label><select id="readingmode" aria-label="Niveau de lecture"><option value="beginner">Débutant · rōmaji visibles</option><option value="intermediate">Intermédiaire · sur demande</option><option value="advanced">Avancé · japonais seul</option></select><button class="secondary" id="readinghelp" type="button" aria-pressed="false">Afficher les rōmaji</button></div><nav class="tabs" aria-label="Rubriques"><button data-tab="home" class="active">🏠 Accueil</button><button data-tab="quiz">🧩 Exercices</button><button data-tab="flash">🧠 Révisions</button><button data-tab="speak">🎤 Oral</button><button data-tab="account">☁️ Mon compte</button></nav><section id="home" class="view"><div class="panel"><h2>Ton parcours de voyage</h2><p>Commence par les mots essentiels que tu as déjà rencontrés. Les autres leçons sont proposées dans la même bibliothèque.</p><div id="lessonlist" class="cards"></div></div><div class="panel"><h2>Une routine facile à retenir</h2><p>5 min de révision, 10 min d'exercices, 5 min d'écoute et 5 min de prononciation. Termine par 5 min sur tes mots difficiles.</p><p class="small muted">Tes résultats sont sauvegardés dans ce navigateur. Ils ne se synchronisent pas encore avec les autres appareils.</p></div></section><section id="quiz" class="view hide"><div class="panel"><div class="lesson"><h2>Exercices variés</h2><select id="quizlesson" aria-label="Choisir une leçon"></select></div><p id="quiztype" class="badge" style="display:inline-block"></p><div class="progress"><div class="fill" id="quizbar"></div></div><p class="status" id="qcount"></p><div id="question"></div><div id="feedback" aria-live="polite"></div><div class="controls"><button id="next" class="hide">Question suivante →</button><button id="restart" class="secondary">Recommencer</button></div></div></section><section id="flash" class="view hide"><div class="panel"><h2>Réviser pour mieux mémoriser</h2><p><strong>1.</strong> Essaie de retrouver le sens. <strong>2.</strong> Clique sur « Voir la réponse ». <strong>3.</strong> Choisis « J’ai oublié » ou « Je connais ». Les mots oubliés reviendront plus souvent.</p><div id="flashcard" class="flash center"></div><div class="controls"><button id="reveal" class="secondary">👀 Voir la réponse</button><button id="again" class="hide">↻ J’ai oublié</button><button id="known" class="hide">✓ Je connais</button><button id="nextflash" class="secondary">Autre carte ↻</button></div><p id="flashstatus" class="status" aria-live="polite"></p><p class="small muted">Tes choix sont mémorisés sur cet appareil. Aucun compte n’est nécessaire pour réviser.</p></div></section><section id="speak" class="view hide"><div class="panel"><h2>Écoute et prononciation</h2><p>Écoute la phrase japonaise, puis essaie de la répéter. Autorise le microphone quand ton navigateur le demande.</p><select id="speaklesson" aria-label="Choisir une leçon orale"></select><div id="speechprompt"></div><div class="controls"><button id="listen">🔊 Écouter</button><button id="slow" class="secondary">🐢 Plus lentement</button><button id="record">🎤 Parler</button><button id="nextspeak" class="secondary">Autre phrase ↻</button></div><div id="speechresult" aria-live="polite"></div><p class="warning small">La reconnaissance peut être indisponible sur certains navigateurs et utilise parfois un service en ligne. Elle vérifie surtout les mots reconnus, pas la qualité phonétique exacte de ton accent.</p></div></section><section id="account" class="view hide"><div class="panel"><h2>☁️ Mon compte et mes sauvegardes</h2><p>La connexion est facultative : tu peux toujours apprendre sans compte. Tes données actuelles restent dans ce navigateur tant que tu ne décides pas de les transférer.</p><div class="controls"><button id="backupdownload" class="secondary">⬇️ Sauvegarder mes progrès (JSON)</button><button id="backupimport" class="secondary" type="button">⬆️ Importer une sauvegarde (JSON)</button><input id="backupfile" type="file" accept=".json,application/json" class="hide" aria-label="Choisir une sauvegarde JSON"></div><p id="importstatus" class="status" aria-live="polite"></p><details class="cloud-details" id="cloudsettings"><summary>1. Configurer la connexion Supabase</summary><p class="small">L'adresse du projet est déjà indiquée. Colle uniquement ta <strong>Publishable key</strong> (clé commençant par <code>sb_publishable_</code>). Ne mets jamais de clé secrète ou de mot de passe de base de données.</p><div class="account-grid"><div><label for="cloudurl">Adresse du projet</label><input id="cloudurl" type="url" value="https://udvnvvlnjhdtphtgkmis.supabase.co" autocomplete="off"></div><div><label for="cloudkey">Publishable key</label><input id="cloudkey" type="text" placeholder="sb_publishable_..." autocomplete="off" spellcheck="false"></div></div><div class="account-actions"><button id="cloudconfigure">Enregistrer sur cet appareil</button></div></details><div id="cloudauth" class="hide"><h3 style="margin-top:22px">2. Connexion personnelle</h3><div class="account-grid"><div><label for="accountemail">Adresse e-mail</label><input id="accountemail" type="email" autocomplete="username" placeholder="ton e-mail"></div><div><label for="accountpassword">Mot de passe</label><input id="accountpassword" type="password" autocomplete="current-password" minlength="12" placeholder="12 caractères minimum"></div></div><div class="account-actions"><button id="accountlogin">Me connecter</button><button id="accountsignup" class="secondary">Créer mon compte</button><button id="accountlogout" class="secondary hide">Me déconnecter</button></div></div><p id="accountstatus" class="account-status" aria-live="polite">Aucune connexion configurée sur cet appareil.</p><div class="v06-box" id="v06box"><h3>🔄 Synchronisation V0.6 — version de développement</h3><p>Une fois activée sur cet appareil, les nouvelles révisions sont enregistrées localement, puis échangées avec ton compte lorsque la connexion est disponible. Cette fonctionnalité n'écrase jamais l'ancienne table de progression.</p><p class="warning small"><strong>Protection :</strong> l'activation vérifie d'abord que la progression de départ correspond à ta sauvegarde cloud. Si elle diffère, la synchronisation est bloquée sans remplacer tes données.</p><div class="account-actions"><button id="v06activate" class="secondary" type="button">Activer la synchronisation V0.6 sur cet appareil</button><button id="v06sync" class="secondary" type="button" disabled>Synchroniser maintenant</button></div><p id="v06status" class="v06-state" role="status" aria-live="polite">Désactivée · Tes données restent locales.</p></div><div id="syncoptions" class="hide"><h3>3. Synchroniser mes progrès</h3><p class="warning small">La synchronisation est <strong>manuelle</strong>. Avant un transfert, télécharge une sauvegarde JSON. Ne transfère pas les données du téléphone après celles du PC sans avoir contrôlé les différences : un transfert remplacerait la sauvegarde cloud existante.</p><div class="account-actions"><button id="cloudinspect" class="secondary">Consulter la sauvegarde cloud</button><button id="cloudupload">Envoyer les progrès de cet appareil</button><button id="clouddownload" class="secondary">Remplacer les progrès locaux par le cloud</button></div><p id="cloudreport" class="status" aria-live="polite"></p></div></div></section></main><footer>Mon Japonais · prototype personnel · pas de publicité · aucun abonnement nécessaire</footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script>
 const lessons=[{name:'Jour 1 — Saluer et remercier',desc:'Bonjour, merci, excusez-moi',items:[['おはようございます','Ohayō gozaimasu','Bonjour (matin)'],['こんにちは','Konnichiwa','Bonjour (journée)'],['こんばんは','Konbanwa','Bonsoir'],['ありがとうございます','Arigatō gozaimasu','Merci beaucoup (poli)'],['すみません','Sumimasen','Excusez-moi'],['はい','Hai','Oui'],['いいえ','Iie','Non'],['わかりません','Wakarimasen','Je ne comprends pas']]},{name:'Jour 2 — Commander',desc:'Demander de l’eau, du thé, un plat',items:[['これをください','Kore o kudasai','Ceci, s’il vous plaît'],['水をください','Mizu o kudasai','De l’eau, s’il vous plaît'],['お茶をください','Ocha o kudasai','Du thé, s’il vous plaît'],['ラーメンをください','Rāmen o kudasai','Des ramen, s’il vous plaît'],['ごめんなさい','Gomen nasai','Je suis désolé(e)']]},{name:'Jour 3 — Se faire comprendre',desc:'Répéter, ralentir, répondre poliment',items:[['いいえ、大丈夫です','Iie, daijōbu desu','Non merci, ça va'],['かしこまりました','Kashikomarimashita','Bien compris (très poli)'],['ゆっくりお願いします','Yukkuri onegaishimasu','Lentement, s’il vous plaît'],['もう一度お願いします','Mō ichido onegaishimasu','Encore une fois, s’il vous plaît']]},{name:'Voyage — Gare et déplacements',desc:'Pour les transports au Japon',items:[['駅はどこですか','Eki wa doko desu ka','Où est la gare ?'],['トイレはどこですか','Toire wa doko desu ka','Où sont les toilettes ?'],['いくらですか','Ikura desu ka','Combien ça coûte ?'],['助けてください','Tasukete kudasai','Aidez-moi, s’il vous plaît']]}];
 const all=lessons.flatMap((l,li)=>l.items.map((v,i)=>({jp:v[0],rom:v[1],fr:v[2],id:li+'-'+i,li})));const romajiFor=jp=>all.find(x=>x.jp===jp)?.rom||'';const $=x=>document.getElementById(x);let saved={};try{saved=JSON.parse(localStorage.getItem('monjaponais_v1')||'{}')}catch{}let state={points:saved.points||0,cards:saved.cards||{}};let readingMode=localStorage.getItem('monjaponais_reading_mode')||'beginner';if(!['beginner','intermediate','advanced'].includes(readingMode))readingMode='beginner';
+// V0.6 : chaque révision devient un événement immuable, indépendant des autres appareils.
+const V06_KEY='monjaponais_v06_sync_journal_v1';
+const V06_ENABLED_KEY='monjaponais_v06_sync_enabled_v1';
+let v06Journal=null,v06SyncBusy=false,v06SyncTimer=null;
+try{v06Journal=JSON.parse(localStorage.getItem(V06_KEY)||'null')}catch{}
+const v06Copy=x=>JSON.parse(JSON.stringify(x));
+const v06Snapshot=()=>({points:state.points,cards:v06Copy(state.cards)});
+const v06Compare=(a,b)=>JSON.stringify(v06Canonical(a))===JSON.stringify(v06Canonical(b));
+function v06CompareEvent(a,b){return v06Compare({...a,at:new Date(a.at).toISOString()},{...b,at:new Date(b.at).toISOString()});}
+function v06Canonical(x){
+ if(Array.isArray(x))return x.map(v06Canonical);
+ if(x&&typeof x==='object')return Object.fromEntries(Object.keys(x).sort().map(k=>[k,v06Canonical(x[k])]));
+ return x;
+}
+function v06StartJournal(){
+ if(!v06Journal){v06Journal={version:1,deviceId:v06UUID(),createdAt:new Date().toISOString(),baseline:v06Snapshot(),events:[]};localStorage.setItem(V06_KEY,JSON.stringify(v06Journal));}
+ return v06Journal;
+}
+function v06UUID(){
+ if(typeof crypto!=='undefined'&&crypto.randomUUID)return crypto.randomUUID();
+ if(typeof crypto!=='undefined'&&crypto.getRandomValues){const b=new Uint8Array(16);crypto.getRandomValues(b);return [...b].map(x=>x.toString(16).padStart(2,'0')).join('');}
+ throw Error('Générateur sécurisé d’identifiants indisponible.');
+}
+function v06ValidEvent(e){
+ return !!e&&typeof e.id==='string'&&e.id.length>=16&&typeof e.deviceId==='string'&&e.deviceId.length>0&&typeof e.cardId==='string'&&/^\d+-\d+$/.test(e.cardId)&&all.some(c=>c.id===e.cardId)&&typeof e.correct==='boolean'&&e.pointsDelta===(e.correct?10:0)&&Number.isFinite(Date.parse(e.at))&&e.resultingCard&&typeof e.resultingCard==='object'&&!Array.isArray(e.resultingCard)&&Number.isInteger(e.resultingCard.step)&&e.resultingCard.step>=0&&e.resultingCard.step<=6&&Number.isFinite(e.resultingCard.due)&&Number.isFinite(e.resultingCard.lastReviewed);
+}
+function v06Merge(a,b){
+ const map=new Map();
+ for(const e of [...a,...b]){
+  if(!v06ValidEvent(e))throw Error('Événement invalide : synchronisation interrompue.');
+  const old=map.get(e.id);
+  if(old&&!v06CompareEvent(old,e))throw Error('Conflit : un identifiant correspond à deux actions différentes. Rien n’a été remplacé.');
+  map.set(e.id,e);
+ }
+ return [...map.values()].sort((x,y)=>x.at.localeCompare(y.at)||x.id.localeCompare(y.id));
+}
+function v06Rebuild(baseline,events){
+ const out=v06Copy(baseline);
+ if(!Number.isSafeInteger(out.points)||out.points<0||!out.cards||typeof out.cards!=='object')throw Error('Base de progression invalide.');
+ for(const e of events){out.points+=e.pointsDelta;out.cards[e.cardId]=v06Copy(e.resultingCard);}
+ if(!Number.isSafeInteger(out.points))throw Error('Total de points invalide.');
+ return out;
+}
+function v06Status(message,type=''){
+ const x=$('v06status'); if(!x)return;x.className='v06-state'+(type?' '+type:'');x.textContent=message;
+}
+function v06Enabled(){return localStorage.getItem(V06_ENABLED_KEY)==='yes'}
+function v06SetControls(){
+ const active=v06Enabled();$('v06activate').disabled=active;$('v06activate').textContent=active?'Synchronisation activée sur cet appareil':'Activer la synchronisation V0.6 sur cet appareil';$('v06sync').disabled=!active;
+ // Une fois la V0.6 activée, l’ancienne interface manuelle ne peut plus écraser la base de référence.
+ $('cloudupload').disabled=active;$('clouddownload').disabled=active;$('backupimport').disabled=active;
+}
+function v06EventFromRow(r){return {id:r.event_id,deviceId:r.device_id,cardId:r.card_id,correct:r.correct,pointsDelta:r.points_delta,at:r.happened_at,resultingCard:r.resulting_card}}
+function v06RowFromEvent(e){return {user_id:cloudUser.id,event_id:e.id,device_id:e.deviceId,card_id:e.cardId,correct:e.correct,points_delta:e.pointsDelta,happened_at:e.at,resulting_card:e.resultingCard}}
+async function v06ReadAll(){
+ const rows=[];let from=0;const size=500;
+ for(;;){
+  const {data,error}=await cloudClient.from('monjaponais_v06_evenements').select('event_id,device_id,card_id,correct,points_delta,happened_at,resulting_card').eq('user_id',cloudUser.id).order('happened_at',{ascending:true}).order('event_id',{ascending:true}).range(from,from+size-1);
+  if(error)throw error;
+  rows.push(...(data||[]));if(!data||data.length<size)break;from+=size;
+  if(from>10000)throw Error('Trop d’événements : analyse interrompue pour sécurité.');
+ }
+ return rows.map(v06EventFromRow);
+}
+async function v06CheckBase(){
+ const r=await getCloudRecord();
+ if(!r||!r.progression)throw Error('Aucune sauvegarde historique trouvée dans Supabase. La V0.6 ne peut pas démarrer.');
+ const base=v06Journal?.baseline||v06Snapshot();
+ if(!v06Compare(base,r.progression))throw Error('La progression de départ de cet appareil est différente de la sauvegarde cloud. Synchronisation bloquée pour éviter une perte de données. Ne remplace aucune sauvegarde.');
+ return base;
+}
+async function v06Sync(){
+ if(!v06Enabled()||v06SyncBusy)return;
+ if(!navigator.onLine){v06Status('Hors ligne · Les révisions restent sauvegardées sur cet appareil.');return;}
+ if(!cloudClient||!cloudUser){v06Status('Compte non connecté · Révisions conservées localement. Connecte-toi dans Mon compte.');return;}
+ v06SyncBusy=true;v06Status('Synchronisation en cours…');
+ try{
+  v06StartJournal();
+  if(!v06Compare(v06Rebuild(v06Journal.baseline,v06Journal.events),v06Snapshot()))throw Error('La progression locale a changé hors du journal V0.6. Synchronisation suspendue pour sécurité.');
+  await v06CheckBase();
+  let cloudEvents=await v06ReadAll();
+  const merged=v06Merge(v06Journal.events,cloudEvents);
+  const cloudIds=new Set(cloudEvents.map(e=>e.id));
+  // Vérification de toutes les données locales AVANT tout envoi.
+  const unsent=v06Journal.events.filter(e=>!cloudIds.has(e.id));
+  for(const e of unsent){
+   const {error}=await cloudClient.from('monjaponais_v06_evenements').insert(v06RowFromEvent(e));
+   // Si l’autre appareil a inséré cet identifiant entre-temps, une relecture valide le contenu.
+   if(error&&error.code!=='23505')throw error;
+  }
+  cloudEvents=await v06ReadAll();
+  const finalEvents=v06Merge(v06Journal.events,cloudEvents);
+  // Une révision peut arriver pendant la requête réseau : la conserver avant tout recalcul.
+  const latestLocal=JSON.parse(localStorage.getItem(V06_KEY)||'null');
+  if(!latestLocal||!v06Compare(latestLocal.baseline,v06Journal.baseline))throw Error('Le journal local a changé. Synchronisation suspendue.');
+  const allEvents=v06Merge(latestLocal.events,finalEvents);
+  const next=v06Rebuild(v06Journal.baseline,allEvents);
+  // Écrire d’abord le journal (source durable), puis la projection de l’interface.
+  const nextJournal={...v06Journal,events:allEvents};
+  localStorage.setItem(V06_KEY,JSON.stringify(nextJournal));v06Journal=nextJournal;
+  state=next;save();
+  const pending=allEvents.some(e=>!cloudEvents.some(c=>c.id===e.id));
+  v06Status((pending?'Révisions locales en attente d’envoi · ':'Synchronisé · ')+allEvents.length+' actions · '+state.points+' points · '+new Date().toLocaleTimeString('fr-FR'),'ok');
+  if(pending)setTimeout(v06QueueSync,200);
+ }catch(err){v06Status('Synchronisation interrompue : '+(err?.message||String(err)),'error');}
+ finally{v06SyncBusy=false;}
+}
+async function v06Activate(){
+ if(v06Enabled())return;
+ if(!cloudClient||!cloudUser){v06Status('Connecte-toi d’abord à ton compte Supabase dans cette page.','error');return;}
+ $('v06activate').disabled=true;
+ try{
+  // Vérifier la base et les événements avant de permettre toute insertion cloud.
+  await v06CheckBase();
+  const cloudEvents=await v06ReadAll();
+  if(v06Journal)v06Merge(v06Journal.events,cloudEvents);
+  v06StartJournal();
+  localStorage.setItem(V06_ENABLED_KEY,'yes');v06SetControls();
+  v06Status('Activée · Synchronisation initiale en cours…');
+  await v06Sync();
+ }catch(err){v06Status('Activation refusée : '+(err?.message||String(err)),'error');}
+ finally{v06SetControls()}
+}
+function v06QueueSync(){if(v06Enabled()&&!v06SyncBusy&&cloudUser&&navigator.onLine)v06Sync()}
+window.addEventListener('online',v06QueueSync);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)v06QueueSync()});
+window.addEventListener('storage',e=>{if(e.key===V06_KEY||e.key==='monjaponais_v1')v06Status('Données modifiées dans un autre onglet. Recharge cette page avant de continuer.','error')});
+setInterval(v06QueueSync,30000);
+
 function updateReading(){document.body.dataset.reading=readingMode;$('readingmode').value=readingMode;$('readinghelp').setAttribute('aria-pressed',String(document.body.classList.contains('show-reading')));$('readinghelp').textContent=document.body.classList.contains('show-reading')?'Masquer les rōmaji':'Afficher les rōmaji'}
 function resetReading(){document.body.classList.remove('show-reading');updateReading()}
 $('readingmode').onchange=e=>{readingMode=e.target.value;localStorage.setItem('monjaponais_reading_mode',readingMode);resetReading()};
 $('readinghelp').onclick=()=>{document.body.classList.toggle('show-reading');updateReading()};updateReading();
-function save(){localStorage.setItem('monjaponais_v1',JSON.stringify(state));stats()}function stats(){$('points').textContent=state.points;$('learned').textContent=Object.keys(state.cards).length;$('due').textContent=all.filter(x=>state.cards[x.id]&&state.cards[x.id].due<=Date.now()).length}function track(item,ok){let s=state.cards[item.id]||{step:0};s.step=ok?Math.min(6,s.step+1):0;s.misses=ok?Math.max(0,(s.misses||0)-1):(s.misses||0)+1;s.lastReviewed=Date.now();const delays=[0,5*60000,86400000,3*86400000,7*86400000,14*86400000,30*86400000];s.due=Date.now()+delays[s.step];state.cards[item.id]=s;if(ok)state.points+=10;save()}function tabs(t){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('hide',e.id!==t));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));if(t==='flash')newFlash();if(t==='speak')newSpeak()}document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tabs(b.dataset.tab));$('lessonlist').innerHTML=lessons.map((l,i)=>`<div class="tile"><span class="badge">Module ${i+1}</span><h3 style="margin-top:14px">${l.name}</h3><p>${l.desc}</p><button data-lesson="${i}">S'entraîner →</button></div>`).join('');document.querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>{$('quizlesson').value=b.dataset.lesson;startQuiz();tabs('quiz')});for(const id of ['quizlesson','speaklesson'])$(id).innerHTML=lessons.map((l,i)=>`<option value="${i}">${l.name}</option>`).join('');
+function save(){localStorage.setItem('monjaponais_v1',JSON.stringify(state));stats()}function stats(){$('points').textContent=state.points;$('learned').textContent=Object.keys(state.cards).length;$('due').textContent=all.filter(x=>state.cards[x.id]&&state.cards[x.id].due<=Date.now()).length}function track(item,ok){
+ // Créer un événement AVANT toute modification de la projection locale.
+ try{
+  const journal=v06StartJournal();
+  const old=state.cards[item.id]||{step:0};
+  const s={...old};const now=Date.now();
+  s.step=ok?Math.min(6,s.step+1):0;
+  s.misses=ok?Math.max(0,(s.misses||0)-1):(s.misses||0)+1;
+  s.lastReviewed=now;
+  const delays=[0,5*60000,86400000,3*86400000,7*86400000,14*86400000,30*86400000];
+  s.due=now+delays[s.step];
+  const evt={id:v06UUID(),deviceId:journal.deviceId,cardId:item.id,correct:ok,pointsDelta:ok?10:0,at:new Date(now).toISOString(),resultingCard:s};
+  const nextJournal={...journal,events:[...journal.events,evt]};
+  localStorage.setItem(V06_KEY,JSON.stringify(nextJournal));
+  v06Journal=nextJournal;
+  state.cards[item.id]=s;if(ok)state.points+=10;save();
+  v06QueueSync();
+ }catch(err){
+  alert('Révision non enregistrée : '+err.message+'. Libère de l’espace de stockage et recharge la page.');
+ }
+}function tabs(t){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('hide',e.id!==t));document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));if(t==='flash')newFlash();if(t==='speak')newSpeak()}document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tabs(b.dataset.tab));$('lessonlist').innerHTML=lessons.map((l,i)=>`<div class="tile"><span class="badge">Module ${i+1}</span><h3 style="margin-top:14px">${l.name}</h3><p>${l.desc}</p><button data-lesson="${i}">S'entraîner →</button></div>`).join('');document.querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>{$('quizlesson').value=b.dataset.lesson;startQuiz();tabs('quiz')});for(const id of ['quizlesson','speaklesson'])$(id).innerHTML=lessons.map((l,i)=>`<option value="${i}">${l.name}</option>`).join('');
 let qs=[],qidx=0,locked=false,current=null;const shuffle=a=>[...a].sort(()=>Math.random()-.5);function startQuiz(){let li=+$('quizlesson').value;let a=lessons[li].items.map((_,i)=>all.find(x=>x.id===li+'-'+i));qs=shuffle([...a]).slice(0,Math.min(8,a.length));qidx=0;showQuestion()}function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\u3040-\u30ff\u3400-\u9fff]/g,'')}function showQuestion(){resetReading();locked=false;$('next').classList.add('hide');$('feedback').innerHTML='';$('quizbar').style.width=(qidx/qs.length*100)+'%';if(qidx>=qs.length){$('question').innerHTML='<h2>🎉 Leçon terminée !</h2><p>Les erreurs font partie de l’apprentissage. Tu peux revoir cette leçon autant que nécessaire.</p>';$('qcount').textContent='Terminé';return}current=qs[qidx];$('qcount').textContent=`Question ${qidx+1} sur ${qs.length}`;let type=qidx%3;$('quiztype').textContent=['Choisir la traduction','Retrouver le japonais','Écrire le sens'][type];if(type<2){let target=type===0?current.fr:current.jp;let distract=shuffle(all.filter(x=>x.id!==current.id)).map(x=>type===0?x.fr:x.jp).filter((v,i,a)=>a.indexOf(v)===i).slice(0,3);let options=shuffle([target,...distract]);$('question').innerHTML=`<div class="bigjp">${type===0?current.jp:current.fr}</div>${type===0?`<p class="reading">${current.rom}</p>`:''}<p class="center muted">${type===0?'Que signifie cette expression ?':'Quelle expression correspond ?'}</p>${options.map((o,i)=>`<button class="option" data-opt="${i}">${type===1?`<span class="option-jp">${o}</span><span class="option-rom">${romajiFor(o)}</span>`:o}</button>`).join('')}<button class="secondary" id="qplay">🔊 Écouter le japonais</button>`;document.querySelectorAll('[data-opt]').forEach((b,i)=>b.onclick=()=>answer(options[i]===target));$('qplay').onclick=()=>speak(current.jp)}else{$('question').innerHTML=`<div class="bigjp">${current.jp}</div><p class="reading">${current.rom}</p><p>Écris le sens en français, puis compare ta réponse.</p><input id="typed" class="answer" placeholder="Ta réponse en français" autocomplete="off"><div class="controls"><button id="checktyped">Voir la correction</button><button class="secondary" id="qplay">🔊 Écouter</button></div>`;$('qplay').onclick=()=>speak(current.jp);$('checktyped').onclick=()=>{if(locked)return;let entered=$('typed').value.trim();if(!entered){$('typed').focus();return}$('feedback').innerHTML=`<div class="result">Ta réponse : <b>${esc(entered)}</b><p>Réponse attendue : <b>${current.fr}</b></p><p>Compare les deux sens et indique si tu avais compris.</p><div class="controls"><button id="selfyes">J'avais compris ✓</button><button class="secondary" id="selfno">À revoir</button></div></div>`;$('checktyped').disabled=true;$('selfyes').onclick=()=>answer(true);$('selfno').onclick=()=>answer(false)}}}function esc(x){return x.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function answer(ok){if(locked)return;locked=true;track(current,ok);$('feedback').innerHTML=`<div class="result ${ok?'good':'bad'}"><strong>${ok?'✓ Bien joué !':'↻ On va le revoir.'}</strong><p>${current.jp}<span class="reading">${current.rom}</span><br>${current.fr}</p></div>`;$('next').textContent=qidx===qs.length-1?'Voir mon bilan →':'Question suivante →';$('next').classList.remove('hide');document.querySelectorAll('[data-opt]').forEach(b=>b.disabled=true)}$('next').onclick=()=>{qidx++;showQuestion()};$('restart').onclick=startQuiz;$('quizlesson').onchange=startQuiz;
 let flash=null,shown=false;
 // On ne répète pas immédiatement une carte lorsque d'autres cartes sont disponibles.
@@ -90,7 +244,7 @@ function localSnapshot(){return {points:state.points,cards:JSON.parse(JSON.strin
 function backupJson(){const payload={format:'monjaponais_v1',exportedAt:new Date().toISOString(),progression:localSnapshot()};let blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='mon-japonais-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),3000)}
 $('backupdownload').onclick=backupJson;
 // Importation locale explicite : aucun appel à Supabase, aucune modification avant validation.
-$('backupimport').onclick=()=>{$('backupfile').value='';$('backupfile').click()};
+$('backupimport').onclick=()=>{if(v06Enabled()){alert('Importation bloquée pendant la synchronisation V0.6.');return}$('backupfile').value='';$('backupfile').click()};
 $('backupfile').onchange=async()=>{
  const f=$('backupfile').files?.[0]; if(!f)return;
  const report=$('importstatus');report.textContent='Vérification du fichier en cours…';
@@ -110,7 +264,7 @@ $('backupfile').onchange=async()=>{
   if(!confirm(summary+'\n\nIMPORTANT : cette importation REMPLACERA uniquement les progrès LOCAUX de cet appareil. La sauvegarde Supabase ne sera pas modifiée.\n\nVeux-tu continuer ?')){report.textContent='Importation annulée. Aucune donnée modifiée.';return}
   // Sauvegarde déclenchée avant toute modification des données locales.
   backupJson();
-  state={points:p.points,cards:JSON.parse(JSON.stringify(p.cards))};save();recentFlash=[];
+  state={points:p.points,cards:JSON.parse(JSON.stringify(p.cards))};save();localStorage.removeItem(V06_KEY);v06Journal=null;recentFlash=[];
   report.textContent='Importation locale réussie : '+cloudInfo(state)+'. Une sauvegarde de tes anciennes données locales a été téléchargée. Le cloud reste inchangé.';
  }catch(e){report.textContent='Importation refusée : '+e.message+'. Aucune donnée modifiée.'}
 };
@@ -126,7 +280,7 @@ async function configureCloud(persist=false){
     const {data,error}=await cloudClient.auth.getUser();
     cloudUser=error?null:data.user;
     renderCloudUser();
-    cloudClient.auth.onAuthStateChange((_event,session)=>{cloudUser=session?.user||null;renderCloudUser()});
+    cloudClient.auth.onAuthStateChange((_event,session)=>{cloudUser=session?.user||null;renderCloudUser();v06QueueSync()});
   }catch(e){cloudMessage('Impossible de configurer Supabase : '+e.message,'error')}
 }
 function renderCloudUser(){
@@ -153,6 +307,7 @@ $('accountlogout').onclick=async()=>{if(cloudClient){const {error}=await cloudCl
 async function getCloudRecord(){if(!cloudClient||!cloudUser)throw Error('Connecte-toi avant de synchroniser.');const {data,error}=await cloudClient.from('progression_japonais').select('progression,updated_at').eq('user_id',cloudUser.id).maybeSingle();if(error)throw error;return data}
 $('cloudinspect').onclick=async()=>{try{let r=await getCloudRecord();$('cloudreport').textContent=r?'Cloud : '+cloudInfo(r.progression)+' · Mis à jour : '+new Date(r.updated_at).toLocaleString('fr-FR'):'Aucune sauvegarde dans le cloud pour ce compte.'}catch(e){cloudMessage('Lecture impossible : '+e.message,'error')}};
 $('cloudupload').onclick=async()=>{
+ if(v06Enabled()){cloudMessage('Envoi manuel désactivé : la V0.6 utilise le journal d’événements.','error');return}
  try{const existing=await getCloudRecord();
  const msg=existing?'Attention : une sauvegarde cloud existe déjà ('+cloudInfo(existing.progression)+'). L’envoi remplacera sa progression par celle de CET appareil ('+cloudInfo(localSnapshot())+'). As-tu téléchargé une sauvegarde JSON et souhaites-tu vraiment remplacer le cloud ?':'Tu vas envoyer au cloud les progrès de CET appareil ('+cloudInfo(localSnapshot())+'). As-tu téléchargé une sauvegarde JSON ?';
  if(!confirm(msg))return;
@@ -161,12 +316,23 @@ $('cloudupload').onclick=async()=>{
  }catch(e){cloudMessage('Envoi impossible : '+e.message,'error')}
 };
 $('clouddownload').onclick=async()=>{
+ if(v06Enabled()){cloudMessage('Téléchargement remplaçant désactivé pendant la V0.6.','error');return}
  try{const r=await getCloudRecord();if(!r){cloudMessage('Aucune sauvegarde cloud disponible.','error');return}
  const p=r.progression;if(!p||typeof p!=='object'||typeof p.cards!=='object'||Array.isArray(p.cards)||!Number.isFinite(Number(p.points))){throw Error('Format cloud inattendu. Aucun changement effectué.')}
  if(!confirm('ATTENTION : les données locales ('+cloudInfo(localSnapshot())+') seront remplacées par celles du cloud ('+cloudInfo(p)+'). Télécharge d’abord ta sauvegarde JSON. Confirmer le remplacement ?'))return;
- backupJson();state={points:Number(p.points)||0,cards:p.cards};save();$('cloudreport').textContent='Progrès téléchargés et sauvegarde locale automatique créée. Recharge les révisions pour actualiser les cartes.';
+ backupJson();state={points:Number(p.points)||0,cards:p.cards};save();localStorage.removeItem(V06_KEY);v06Journal=null;$('cloudreport').textContent='Progrès téléchargés et sauvegarde locale automatique créée. Recharge les révisions pour actualiser les cartes.';
  }catch(e){cloudMessage('Téléchargement impossible : '+e.message,'error')}
 };
 function initCloud(){let c;try{c=JSON.parse(localStorage.getItem(cloudStorageKey)||'null')}catch{}if(c?.url===baseCloudUrl&&c?.key?.startsWith('sb_publishable_')){$('cloudurl').value=c.url;$('cloudkey').value=c.key;configureCloud(false)}}
 initCloud();
+$('v06activate').onclick=v06Activate;
+$('v06sync').onclick=v06Sync;
+v06SetControls();
+if(v06Enabled()){
+ if(v06Journal&&v06Compare(v06Rebuild(v06Journal.baseline,v06Journal.events),v06Snapshot())){
+  v06Status('Activée · Prête à synchroniser dès que le compte sera connecté.');
+ }else{
+  v06Status('ATTENTION : journal et progression locale incohérents. Ne révise pas avant vérification.','error');
+ }
+}
 </script></body></html>
