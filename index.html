@@ -316,7 +316,7 @@ $('known').textContent='✓ Je connais';
 $('again').onclick=()=>{track(flash,false);newFlash()};
 $('known').onclick=()=>{track(flash,true);newFlash()};
 $('nextflash').onclick=newFlash;
-let speechitem=null,recognition=null;function newSpeak(){resetReading();let li=+$('speaklesson').value;let pool=all.filter(x=>x.li===li);speechitem=pool[Math.floor(Math.random()*pool.length)];$('speechprompt').innerHTML=`<div class="bigjp">${speechitem.jp}</div><p class="reading">${speechitem.rom}</p><p class="center">${speechitem.fr}</p>`;$('speechresult').innerHTML=''}function speak(text,rate=.85){if(!('speechSynthesis'in window)){$('speechresult').innerHTML='<p class="warning">Lecture audio non disponible ici.</p>';return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=rate;let voice=speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith('ja'));if(voice)u.voice=voice;speechSynthesis.speak(u)}$('listen').onclick=()=>speak(speechitem.jp);$('slow').onclick=()=>speak(speechitem.jp,.65);$('nextspeak').onclick=newSpeak;$('speaklesson').onchange=newSpeak;$('record').onclick=()=>{let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){$('speechresult').innerHTML='<p class="warning">Reconnaissance vocale non prise en charge par ce navigateur. Essaie Chrome ou Edge avec une connexion Internet.</p>';return}try{if(recognition)recognition.abort();recognition=new Rec();recognition.lang='ja-JP';recognition.interimResults=false;recognition.maxAlternatives=5;$('speechresult').innerHTML='<p class="result">🎙️ Parle maintenant en japonais…</p>';let target=speechitem;recognition.onresult=e=>{let heard=Array.from(e.results[0]).map(x=>x.transcript);let ok=heard.some(s=>norm(s)===norm(target.jp));$('speechresult').innerHTML=`<div class="result ${ok?'good':'bad'}"><strong>${ok?'✓ Phrase reconnue !':'Phrase non reconnue exactement'}</strong><p>Reconnu : ${esc(heard[0]||'—')}</p><p>Attendu : ${target.jp} <span class="reading">${target.rom}</span></p><p class="small">${ok?'Bien joué ! La reconnaissance ne mesure pas précisément l’accent.':'Réécoute lentement et réessaie : le système peut aussi se tromper.'}</p></div>`;track(target,ok)};recognition.onerror=e=>{$('speechresult').innerHTML=`<p class="warning">Microphone ou reconnaissance indisponible (${esc(e.error)}). Vérifie les autorisations du navigateur et ta connexion.</p>`};recognition.start()}catch(e){$('speechresult').innerHTML='<p class="warning">Impossible de démarrer la reconnaissance. Vérifie l’accès au microphone.</p>'}};stats();startQuiz();newSpeak();
+let speechitem=null,recognition=null;function newSpeak(){resetReading();let li=+$('speaklesson').value;let pool=all.filter(x=>x.li===li);speechitem=pool[Math.floor(Math.random()*pool.length)];$('speechprompt').innerHTML=`<div class="bigjp">${speechitem.jp}</div><p class="reading">${speechitem.rom}</p><p class="center">${speechitem.fr}</p>`;$('speechresult').innerHTML=''}function speak(text,rate=.85){if(typeof window.monJaponaisSpeak==='function'){window.monJaponaisSpeak(text,rate);return;}if(!('speechSynthesis'in window)){$('speechresult').innerHTML='<p class="warning">Lecture audio non disponible ici.</p>';return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=rate;let voice=speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith('ja'));if(voice)u.voice=voice;speechSynthesis.speak(u)}$('listen').onclick=()=>speak(speechitem.jp);$('slow').onclick=()=>speak(speechitem.jp,.65);$('nextspeak').onclick=newSpeak;$('speaklesson').onchange=newSpeak;$('record').onclick=()=>{let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){$('speechresult').innerHTML='<p class="warning">Reconnaissance vocale non prise en charge par ce navigateur. Essaie Chrome ou Edge avec une connexion Internet.</p>';return}try{if(recognition)recognition.abort();recognition=new Rec();recognition.lang='ja-JP';recognition.interimResults=false;recognition.maxAlternatives=5;$('speechresult').innerHTML='<p class="result">🎙️ Parle maintenant en japonais…</p>';let target=speechitem;recognition.onresult=e=>{let heard=Array.from(e.results[0]).map(x=>x.transcript);let ok=heard.some(s=>norm(s)===norm(target.jp));$('speechresult').innerHTML=`<div class="result ${ok?'good':'bad'}"><strong>${ok?'✓ Phrase reconnue !':'Phrase non reconnue exactement'}</strong><p>Reconnu : ${esc(heard[0]||'—')}</p><p>Attendu : ${target.jp} <span class="reading">${target.rom}</span></p><p class="small">${ok?'Bien joué ! La reconnaissance ne mesure pas précisément l’accent.':'Réécoute lentement et réessaie : le système peut aussi se tromper.'}</p></div>`;track(target,ok)};recognition.onerror=e=>{$('speechresult').innerHTML=`<p class="warning">Microphone ou reconnaissance indisponible (${esc(e.error)}). Vérifie les autorisations du navigateur et ta connexion.</p>`};recognition.start()}catch(e){$('speechresult').innerHTML='<p class="warning">Impossible de démarrer la reconnaissance. Vérifie l’accès au microphone.</p>'}};stats();startQuiz();newSpeak();
 
 // Supabase : aucune transmission automatique des progrès, ni suppression silencieuse.
 let cloudClient=null, cloudUser=null;
@@ -477,7 +477,7 @@ const COURSE_KEY='monjaponais_v1_programme_days';
 const COURSE_DAY_KEY='monjaponais_v1_programme_selected';
 let selectedCourseDay=Math.max(1,Math.min(365,Number(localStorage.getItem(COURSE_DAY_KEY))||1));
 const courseFinished=()=>{try{let a=JSON.parse(localStorage.getItem(COURSE_KEY)||'[]');return Array.isArray(a)?a.filter(x=>Number.isInteger(x)&&x>0&&x<=365):[]}catch{return []}};
-function courseSpeak(jp){if(!('speechSynthesis' in window))return alert('Synthèse vocale indisponible sur cet appareil.');speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(jp);u.lang='ja-JP';u.rate=.8;let v=speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith('ja'));if(v)u.voice=v;speechSynthesis.speak(u)}
+function courseSpeak(jp){if(typeof window.monJaponaisSpeak==='function'){window.monJaponaisSpeak(jp,0.8);return;}if(!('speechSynthesis' in window))return alert('Synthèse vocale indisponible sur cet appareil.');speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(jp);u.lang='ja-JP';u.rate=.8;let v=speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith('ja'));if(v)u.voice=v;speechSynthesis.speak(u)}
 function courseSelect(n){selectedCourseDay=Math.max(1,Math.min(365,Number(n)||1));localStorage.setItem(COURSE_DAY_KEY,String(selectedCourseDay));renderCourse()}
 function renderCourse(){
  const day=COURSE_SCHEDULE[selectedCourseDay-1],l=lessons[day.lesson],done=courseFinished();
@@ -550,66 +550,88 @@ renderScript();
 
 </script>
 <script>
-/* Mon Japonais – choix de la voix japonaise, propre à cet appareil. */
+/* Mon Japonais — audio japonais avec repli mobile si getVoices() est vide. */
 (function(){
   'use strict';
   const selector=document.getElementById('jpvoice');
   const button=document.getElementById('jpvoicetest');
   const note=document.getElementById('jpvoicenote');
+  if(!selector||!button||!note)return;
   const key='monjaponais_japanese_voice_v1';
   const synth=window.speechSynthesis;
-  if(!synth||!window.SpeechSynthesisUtterance){
-    selector.innerHTML='<option>Voix non disponibles</option>';
-    selector.disabled=true;button.disabled=true;return;
-  }
+  const supported=!!synth&&typeof window.SpeechSynthesisUtterance==='function';
   let voices=[];
-  function available(){return synth.getVoices().filter(v=>/^ja(?:-|$)/i.test(v.lang));}
+  let activeUtterance=null;
+  if(!supported){
+    selector.innerHTML='<option value="">Synthèse vocale indisponible</option>';
+    selector.disabled=true;
+    button.disabled=true;
+    note.textContent='Ce navigateur ne prend pas en charge la synthèse vocale.';
+    return;
+  }
+  function available(){
+    try{return synth.getVoices().filter(v=>/^ja(?:-|$)/i.test(v.lang));}
+    catch(e){return [];}
+  }
   function populate(){
     voices=available();
-    const old=selector.value;
+    const previous=selector.value;
     let preferred='';try{preferred=localStorage.getItem(key)||'';}catch(e){}
     selector.replaceChildren();
-    if(!voices.length){
-      const o=document.createElement('option');o.textContent='Aucune voix japonaise détectée';o.value='';selector.appendChild(o);
-      selector.disabled=true;button.disabled=true;
-      note.textContent='Installe une voix japonaise sur ton ordinateur ou vérifie les voix de Chrome.';
-      return;
-    }
-    selector.disabled=false;button.disabled=false;
-    voices.forEach((v,i)=>{
-      const o=document.createElement('option');o.value=String(i);
+    // Sur Android, speechSynthesis fonctionne souvent sans exposer ses voix.
+    // L'option automatique laisse le moteur vocal choisir ja-JP.
+    const auto=document.createElement('option');
+    auto.value='auto';auto.textContent='Automatique · voix japonaise de cet appareil';
+    selector.appendChild(auto);
+    voices.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v.voiceURI;
       o.textContent=v.name+' ('+v.lang+')'+(v.localService?' · locale':' · en ligne');
       selector.appendChild(o);
     });
-    const idx=voices.findIndex(v=>v.voiceURI===preferred||v.name+'|'+v.lang===preferred);
-    if(idx>=0)selector.value=String(idx);
-    else if(old!==''&&Number(old)<voices.length)selector.value=old;
-    else {
-      const google=voices.findIndex(v=>/google/i.test(v.name)&&!v.localService);
-      selector.value=String(google>=0?google:0);
-    }
-    note.textContent=voices.length+' voix japonaise(s) trouvée(s). Le choix reste propre à cet appareil.';
+    const match=voices.find(v=>v.voiceURI===preferred);
+    if(match)selector.value=match.voiceURI;
+    else if(previous==='auto')selector.value='auto';
+    else if(voices.some(v=>v.voiceURI===previous))selector.value=previous;
+    else if(voices.length){
+      const google=voices.find(v=>/google/i.test(v.name)&&!v.localService);
+      selector.value=(google||voices[0]).voiceURI;
+    }else selector.value='auto';
+    selector.disabled=false;
+    button.disabled=false;
+    note.textContent=voices.length
+      ? voices.length+' voix japonaise(s) détectée(s). Tu peux également choisir la voix automatique.'
+      : 'Aucune voix listée : la voix japonaise automatique peut fonctionner sur téléphone. Essaie « Écouter un exemple ».';
   }
   selector.addEventListener('change',()=>{
-    const v=voices[Number(selector.value)];if(!v)return;
-    try{localStorage.setItem(key,v.voiceURI);}catch(e){}
-    note.textContent='Voix choisie : '+v.name;
+    try{localStorage.setItem(key,selector.value);}catch(e){}
+    const v=voices.find(v=>v.voiceURI===selector.value);
+    note.textContent=v?'Voix choisie : '+v.name:'Voix japonaise automatique sélectionnée.';
   });
   function playJapanese(text,rate){
     if(!text)return;
-    synth.cancel();
-    const utterance=new SpeechSynthesisUtterance(text);
-    utterance.lang='ja-JP';utterance.rate=rate;
-    const voice=voices[Number(selector.value)];
-    if(voice)utterance.voice=voice;
-    synth.speak(utterance);
+    try{
+      synth.cancel();
+      const utterance=new SpeechSynthesisUtterance(text);
+      utterance.lang='ja-JP';
+      utterance.rate=(typeof rate==='number'&&rate>0)?rate:0.9;
+      const choice=voices.find(v=>v.voiceURI===selector.value);
+      if(choice)utterance.voice=choice;
+      // Sans voix exposée, laisser voice=null et lang=ja-JP pour Android.
+      activeUtterance=utterance;
+      utterance.onend=()=>{if(activeUtterance===utterance)activeUtterance=null;};
+      utterance.onerror=e=>{
+        if(activeUtterance===utterance)activeUtterance=null;
+        note.textContent='Lecture impossible ('+(e.error||'erreur inconnue')+'). Vérifie la synthèse vocale et le volume de ton appareil.';
+      };
+      synth.speak(utterance);
+      if(synth.paused)synth.resume();
+    }catch(e){note.textContent='Impossible de lancer la lecture : '+e.message;}
   }
-  // Utilise le même réglage pour les exercices et le programme annuel.
-  window.speak=playJapanese;
-  window.courseSpeak=function(text){playJapanese(text,0.95);};
+  window.monJaponaisSpeak=playJapanese;
   button.addEventListener('click',()=>playJapanese('こんにちは。ありがとうございます。',0.95));
   populate();
-  synth.addEventListener('voiceschanged',populate);
+  if(typeof synth.addEventListener==='function')synth.addEventListener('voiceschanged',populate);
 })();
 </script>
 </body></html>
